@@ -4,6 +4,8 @@ This file is the entry point for the follower module.
 """
 
 import cv2
+from parameters import FRAME_WIDTH, FRAME_HEIGHT
+from servo_control import adjust_servos
 
 
 def display_faces(frame, faces):
@@ -78,6 +80,10 @@ def run_follower():
 
     # Open the webcam.
     cap = cv2.VideoCapture(0)
+
+    # Set resolution.
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
 
     while True:
         # Read the frame from the webcam.

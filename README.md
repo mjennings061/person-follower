@@ -13,4 +13,4 @@ An intentionally-creepy project to detect and follow people using computer visio
 
 1. Clone the repository.
 2. Install the dependencies using `pip install -r requirements.txt`.
-3. Run the program using `python follower/main.py`.
+3. Run the program using `python follower/follower.py`.

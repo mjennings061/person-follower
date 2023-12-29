@@ -3,58 +3,66 @@
 This file contains code for adjusting servo positions based on face detection."""
 
 import logging
-from parameters import FRAME_WIDTH, FRAME_HEIGHT
-
-# Constants.
-PAN_SPEED = 10
-TILT_SPEED = 10
+import RPi.GPIO as GPIO
+from time import sleep
 
 
-def calculate_face_positions(faces):
-    """Calculates the average x and y coordinates of the given faces.
-    
-    Args:
-        faces: A list of rectangles, each of which represents a face in the frame.
+class Servo:
+    """Represents a servo motor."""
+
+    # Constants.
+    DEFAULT_PIN = 11
+    DEFAULT_ANGLE = 90
+    MOVEMENT_DELAY = 0.5
+
+    def __init__(self, pin=DEFAULT_PIN):
+        """Initializes the servo.
+
+        Args:
+            pin: The GPIO pin that the servo is connected to.
+        """
+        logging.info(f'Setup servo on pin {pin}.')
+        self.pin = pin
+
+        # Setup the GPIO pin.
+        GPIO.setup(self.pin, GPIO.OUT)
+        self.pwm = GPIO.PWM(self.pin, 50)
+        self.pwm.start(0)
         
-    Returns:
-        The average x coordinate of the faces.
-    """
-    avg_x = 0
-    for (x_pixel, _, width, _) in faces:
-        avg_x += x_pixel + width / 2
-    avg_x /= len(faces)
-    return avg_x
+        # Move the servo to the default angle.
+        self.set_angle(self.DEFAULT_ANGLE)
 
+    def set_angle(self, angle):
+        """Sets the angle of the servo.
 
-def adjust_servos(faces):
-    """Adjusts the pan and tilt of the servos based on the given faces.
-    
-    Args:
-        faces: A list of rectangles, each of which represents a face in the frame.
-    """
+        Args:
+            angle: The angle to set the servo to.
+        """
+        logging.info(f'Moving to {angle} degrees.')
 
-    # Calculate the average x and y coordinates of the faces.
-    avg_x = calculate_face_positions(faces)
+        # Update the servo angle.
+        self.angle = angle
 
-    # Calculate the difference between the average xcoordinates and the center of the frame.
-    # The difference is normalized to be between -1 and 1.
-    x_diff = (avg_x - FRAME_WIDTH / 2) / (FRAME_WIDTH / 2)
+        # Calculate the duty cycle.
+        duty = angle / 18 + 2
 
-    # TODO: Setup the raspberry pi pan servo.
-    # TODO: Get the current angle of the pan servo.
-    # TODO: Adjust the pan of the servos based on the difference.
+        # Move the servo to the given angle.
+        GPIO.output(self.pin, True)
+        self.pwm.ChangeDutyCycle(duty)
 
-    # Adjust the pan of the servos based on the difference.
-    angle = angle + x_diff * PAN_SPEED
+        # Allow the servo to move to the given angle.
+        sleep(self.MOVEMENT_DELAY)
+
+        # Stop the servo from moving to reduce jitter.
+        GPIO.output(self.pin, False)
+        self.pwm.ChangeDutyCycle(0)
 
 
 if __name__ == '__main__':
-    # Example faces.
-    example_faces = [
-        (100, 100, 100, 100),
-        (200, 200, 100, 100),
-        (300, 300, 150, 150),
-    ]
+    # Example GPIO pin.
+    gpio_pin = 11
+    desired_angle = 90
 
     # Adjust the servos based on the example faces.
-    adjust_servos(example_faces)
+    my_servo = Servo(gpio_pin)
+    my_servo.set_angle(desired_angle)

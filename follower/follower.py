@@ -6,7 +6,64 @@ This file is the entry point for the follower module.
 import cv2
 import logging
 from parameters import FRAME_WIDTH, FRAME_HEIGHT
-from servo_control import adjust_servos
+from servo_control import Servo
+from time import sleep
+
+# # TODO: Delete this.
+# class Servo:
+#     # Dummy class for now.
+#     def __init__(self, pin=11):
+#         self.pin = pin
+#         self.set_angle()
+
+#     def set_angle(self, angle=90):
+#         logging.info(f'Moving to {angle} degrees.')
+#         self.angle = angle
+#         sleep(0.5)
+
+
+def update_servo_angle(servo, avg_x):
+    """Updates the servo angle based on the average x coordinate of the faces.
+    
+    Args:
+        servo: The servo to update.
+        avg_x: The average x coordinate of the faces.
+    """
+
+    # Constants.
+    MAX_ANGLE = 180
+    MIN_ANGLE = 0
+    GAIN = 0.05
+
+    # Calculate the error.
+    error = avg_x - FRAME_WIDTH / 2
+    logging.info(f'Error: {error}')
+
+    # Calculate the new angle.
+    angle = round(servo.angle + error * GAIN)
+
+    # Limit the angle to the range [MIN_ANGLE, MAX_ANGLE].
+    angle = max(angle, MIN_ANGLE)
+    angle = min(angle, MAX_ANGLE)
+
+    # Set the servo angle.
+    servo.set_angle(angle)
+
+
+def calculate_face_positions(faces):
+        """Calculates the average x coordinate of the given faces.
+        
+        Args:
+            faces: A list of rectangles, each of which represents a face in the frame.
+            
+        Returns:
+            The average x coordinate of the faces.
+        """
+        avg_x = 0
+        for (x_pixel, _, width, _) in faces:
+            avg_x += x_pixel + width / 2
+        avg_x /= len(faces)
+        return avg_x
 
 
 def display_faces(frame, faces):
@@ -16,7 +73,7 @@ def display_faces(frame, faces):
         frame: The frame to draw the rectangles on.
         faces: A list of rectangles, each of which represents a face in the frame.
     """
-    
+
     # Constants.
     COLOUR = (0, 255, 0)
     THICKNESS = 2
@@ -97,6 +154,10 @@ def run_follower():
 
     This function will be called when the follower module is run as a script.
     """
+
+    # Setup the servo.
+    servo = Servo()
+
     # Load the pre-trained face detection model.
     face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
@@ -123,6 +184,14 @@ def run_follower():
 
         # Display the frame with face detection.
         display_faces(adjusted_frame, faces)
+        
+        if len(faces) > 0:
+            # Calculate the average x coordinate of the faces.
+            avg_x = calculate_face_positions(faces)
+
+            # Adjust the servo position based on the average x coordinate of the faces.
+            # Use a proportional controller to update the servo angle.
+            update_servo_angle(servo, avg_x)
 
         # Break the loop if 'q' is pressed.
         if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -134,4 +203,5 @@ def run_follower():
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     run_follower()

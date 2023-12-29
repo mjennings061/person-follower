@@ -3,5 +3,5 @@
 This file contains constants used by the follower module."""
 
 # Constants.
-FRAME_WIDTH = 1920
-FRAME_HEIGHT = 1080
+FRAME_WIDTH = 640
+FRAME_HEIGHT = 480

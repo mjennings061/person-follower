@@ -2,6 +2,7 @@
 
 This file contains code for adjusting servo positions based on face detection."""
 
+import logging
 from parameters import FRAME_WIDTH, FRAME_HEIGHT
 
 # Constants.

@@ -4,6 +4,7 @@ This file is the entry point for the follower module.
 """
 
 import cv2
+import logging
 from parameters import FRAME_WIDTH, FRAME_HEIGHT
 from servo_control import adjust_servos
 
@@ -15,10 +16,17 @@ def display_faces(frame, faces):
         frame: The frame to draw the rectangles on.
         faces: A list of rectangles, each of which represents a face in the frame.
     """
-    # Draw rectangles around the detected faces.
+    
+    # Constants.
     COLOUR = (0, 255, 0)
     THICKNESS = 2
+    TEXT_COLOUR = (0, 0, 255)
+    TEXT_SIZE = 1
+    TEXT_THICKNESS = 2
+
+    # Show each face in the frame.
     for (x_pixel, y_pixel, width, height) in faces:
+        # Draw rectangles around the detected faces.
         cv2.rectangle(
             frame, 
             (x_pixel, y_pixel), 
@@ -27,7 +35,21 @@ def display_faces(frame, faces):
             THICKNESS
         )
 
-    # Display the frame with face detection
+        # Display the X and Y coordinates of the face.
+        x_position = round(x_pixel + width / 2)
+        y_position = round(y_pixel + height / 2)
+        display_text = f'({x_position}, {y_position})'
+        cv2.putText(
+            frame, 
+            display_text, 
+            (x_pixel, y_pixel), 
+            cv2.FONT_HERSHEY_SIMPLEX, 
+            TEXT_SIZE, 
+            TEXT_COLOUR, 
+            TEXT_THICKNESS
+        )
+
+    # Display the frame with face detection.
     cv2.imshow('Face Detection', frame)
 
 

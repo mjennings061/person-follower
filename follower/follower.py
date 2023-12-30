@@ -43,7 +43,6 @@ def update_motor_angle(motor, avg_x):
         motor: The motor to update. Must be an instance of Servo or Stepper.
         avg_x: The average x coordinate of the faces.
     """
-
     # Constants.
     MAX_ANGLE = 180
     MIN_ANGLE = 0
@@ -70,19 +69,20 @@ def update_motor_angle(motor, avg_x):
 
 
 def calculate_average_face_pos(faces):
-        """Calculates the average x coordinate of the given faces.
-        
-        Args:
-            faces: A list of rectangles, each of which represents a face in the frame.
-            
-        Returns:
-            The average x coordinate of the faces.
-        """
-        avg_x = 0
-        for (x_pixel, _, width, _) in faces:
-            avg_x += x_pixel + width / 2
-        avg_x /= len(faces)
-        return avg_x
+    """
+    Calculates the average x coordinate of the given faces.
+
+    Args:
+        faces (list): A list of rectangles, each of which represents a face in the frame.
+
+    Returns:
+        float: The average x coordinate of the faces.
+    """
+    avg_x = 0
+    for (x_pixel, _, width, _) in faces:
+        avg_x += x_pixel + width / 2
+    avg_x /= len(faces)
+    return avg_x
 
 
 def display_faces(frame, faces):
@@ -92,7 +92,6 @@ def display_faces(frame, faces):
         frame: The frame to draw the rectangles on.
         faces: A list of rectangles, each of which represents a face in the frame.
     """
-
     # Constants.
     COLOUR = (0, 255, 0)
     THICKNESS = 2
@@ -151,14 +150,15 @@ def adjust_brightness(frame):
 
 
 def detect_faces(frame, face_cascade):
-    """Detects faces in the given frame using the given face detection model.
+    """
+    Detects faces in the given frame using the given face detection model.
     
     Args:
         frame: The frame to detect faces in.
-        face_cascade: The face detection model to use.
+        face_cascade (cv2.CascadeClassifier): The face detection model to use.
         
     Returns:
-        A list of rectangles, each of which represents a face in the frame.
+        list: A list of rectangles, each of which represents a face in the frame.
     """
     # Convert the frame to grayscale.
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

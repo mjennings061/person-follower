@@ -69,8 +69,8 @@ class Stepper:
 
     # Constants.
     DEFAULT_PINS = [11, 13, 15, 16]
-    MOVEMENT_DELAY = 0.01
-    STEPS_PER_REVOLUTION = 2048
+    MOVEMENT_DELAY = 0.001
+    STEPS_PER_REVOLUTION = 4096
     DEFAULT_ANGLE = 90
     STEP_SEQUENCE = [
         [1, 0, 0, 1], 

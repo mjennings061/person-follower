@@ -99,6 +99,7 @@ class Stepper:
 
         # Assume that the stepper is at the default angle.
         self.angle = self.DEFAULT_ANGLE
+        self.current_step = 0
 
     def move_by_degrees(self, degrees):
         """Sets the angle of the stepper.
@@ -127,18 +128,22 @@ class Stepper:
             steps: The number of steps to move the stepper. 
                 Positive steps means clockwise, negative steps means counterclockwise.
         """
-        # Get the step sequence. Negative steps means reverse the sequence.
-        if steps >= 0:
-            step_sequence = self.STEP_SEQUENCE
-        else:
-            step_sequence = self.STEP_SEQUENCE.reverse()
+        # Number of motor states.
+        n_states = len(self.STEP_SEQUENCE)
 
         # Move the stepper.
         for _ in range(abs(steps)):
-            for step in step_sequence:
-                for pin, state in zip(self.pins, step):
-                    GPIO.output(pin, state)
-                sleep(self.MOVEMENT_DELAY)
+            # Determine next step in the circular buffer.
+            if steps >= 0:
+                self.current_step += 1 % n_states
+            else:
+                self.current_step -= 1 % n_states
+
+            # Get the next step.
+            motor_sequence = self.STEP_SEQUENCE[self.current_step]
+            for pin, state in zip(self.pins, motor_sequence):
+                GPIO.output(pin, state)
+            sleep(self.MOVEMENT_DELAY)
 
     def __del__(self):
         """Cleans up the GPIO pins."""
@@ -169,7 +174,7 @@ if __name__ == '__main__':
 
     # Example GPIO pins.
     gpio_pins = [11, 13, 15, 16]
-    desired_steps = [90, 180, 45, 45]
+    desired_steps = [45, -90, 90, -45]
 
     # Adjust the stepper based on example angles.
     my_stepper = Stepper(gpio_pins)

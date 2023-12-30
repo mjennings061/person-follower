@@ -11,6 +11,8 @@ A silly project to detect and follow people using computer vision on a Raspberry
 
 ## Installation
 
-1. Clone the repository.
+1. Clone the repository using `git clone https://github.com/mjennings061/person-follower.git`
 2. Install the dependencies using `pip install -r requirements.txt`.
-3. Run the program using `python follower/follower.py`.
+3. Connect a servo motor to the Raspberry Pi on pin 3 of the GPIO header.
+4. Connect a stepper motor to the Raspberry Pi on pins 11, 13, 15, and 16 of the GPIO header. Note, this uses a ULN2003A driver board. Connect the power pins to the 5V and GND pins on the GPIO header.
+5. Run the program using `python -m follower.follower`.

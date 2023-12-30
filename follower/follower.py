@@ -5,35 +5,8 @@ This file is the entry point for the follower module.
 
 import cv2
 import logging
-from parameters import FRAME_WIDTH, FRAME_HEIGHT
-from motor_control import Servo, Stepper
-from time import sleep
-
-# # TODO: Delete this when the servo code works as expected on the RPi.
-# class Servo:
-#     # Dummy class for now.
-#     def __init__(self, pin=11):
-#         self.pin = pin
-#         self.set_angle()
-
-#     def set_angle(self, angle=90):
-#         logging.info('Moving to %.0f degrees.', angle)
-#         self.angle = angle
-#         sleep(0.5)
-
-
-# # TODO: Delete this when the stepper code works as expected on the RPi.
-# class Stepper:
-#     # Dummy class for now.
-#     def __init__(self, pins=[11, 13, 15, 16]):
-#         self.pins = pins
-#         self.angle = 90
-
-#     def move_by_degrees(self, degrees):
-#         logging.info('Moving by %.0f degrees...', degrees)
-#         self.angle += degrees
-#         sleep(0.01 * abs(degrees) * 2048 / 360)
-#         logging.info('At %.0f degrees', self.angle)
+from follower.parameters import FRAME_WIDTH, FRAME_HEIGHT
+from follower.motor_control import Servo, Stepper
 
 
 def update_motor_angle(motor, avg_x):

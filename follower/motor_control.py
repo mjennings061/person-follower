@@ -3,9 +3,14 @@
 This file contains code for adjusting servo positions based on face detection."""
 
 import logging
-import RPi.GPIO as GPIO
 from time import sleep
 
+# Platform-specific imports.
+import platform
+if platform.system() == 'Windows':
+    from follower.mock_gpio import MockGPIO as GPIO
+else:
+    import RPi.GPIO as GPIO
 
 class Servo:
     """Represents a servo motor."""

@@ -6,7 +6,7 @@ This file is the entry point for the follower module.
 import cv2
 import logging
 from parameters import FRAME_WIDTH, FRAME_HEIGHT
-from servo_control import Servo
+from motor_control import Servo, Stepper
 from time import sleep
 
 # # TODO: Delete this when the servo code works as expected on the RPi.
@@ -22,11 +22,25 @@ from time import sleep
 #         sleep(0.5)
 
 
-def update_servo_angle(servo, avg_x):
+# # TODO: Delete this when the stepper code works as expected on the RPi.
+# class Stepper:
+#     # Dummy class for now.
+#     def __init__(self, pins=[11, 13, 15, 16]):
+#         self.pins = pins
+#         self.angle = 90
+
+#     def move_by_degrees(self, degrees):
+#         logging.info(f'Moving by {degrees} degrees...')
+#         self.angle += degrees
+#         sleep(0.01 * abs(degrees) * 2048 / 360)
+#         logging.info(f'At {self.angle} degrees')
+
+
+def update_motor_angle(motor, avg_x):
     """Updates the servo angle based on the average x coordinate of the faces.
     
     Args:
-        servo: The servo to update.
+        motor: The motor to update. Must be an instance of Servo or Stepper.
         avg_x: The average x coordinate of the faces.
     """
 
@@ -40,14 +54,19 @@ def update_servo_angle(servo, avg_x):
     logging.info(f'Error: {error}')
 
     # Calculate the new angle.
-    angle = round(servo.angle + error * GAIN)
+    angle = round(motor.angle + error * GAIN)
 
     # Limit the angle to the range [MIN_ANGLE, MAX_ANGLE].
     angle = max(angle, MIN_ANGLE)
     angle = min(angle, MAX_ANGLE)
 
-    # Set the servo angle.
-    servo.set_angle(angle)
+    # Set the new angle.
+    if isinstance(motor, Servo):
+        motor.set_angle(angle)
+    elif isinstance(motor, Stepper):
+        # Calculate the degrees to rotate the stepper motor.
+        degrees = angle - motor.angle
+        motor.move_by_degrees(degrees)
 
 
 def calculate_average_face_pos(faces):
@@ -156,10 +175,12 @@ def run_follower():
     """
 
     # Setup the servo.
-    servo = Servo()
+    motor = Stepper()
 
     # Load the pre-trained face detection model.
-    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(
+        cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+    )
 
     # Open the webcam.
     cap = cv2.VideoCapture(0)
@@ -189,9 +210,9 @@ def run_follower():
             # Calculate the average x coordinate of the faces.
             avg_x = calculate_average_face_pos(faces)
 
-            # Adjust the servo position based on the average x coordinate of the faces.
-            # Use a proportional controller to update the servo angle.
-            update_servo_angle(servo, avg_x)
+            # Adjust the motor position based on the average x coordinate of the faces.
+            # Use a proportional controller to update the motor angle.
+            update_motor_angle(motor, avg_x)
 
         # Break the loop if 'q' is pressed.
         if cv2.waitKey(1) & 0xFF == ord('q'):

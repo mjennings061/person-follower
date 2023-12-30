@@ -11,6 +11,7 @@ class Servo:
     """Represents a servo motor."""
 
     # Constants.
+    PWM_FREQUENCY = 50  # Hz
     DEFAULT_PIN = 3
     DEFAULT_ANGLE = 90
     MOVEMENT_DELAY = 0.25
@@ -27,8 +28,7 @@ class Servo:
         # Setup the GPIO pin.
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin, GPIO.OUT)
-        self.pwm = GPIO.PWM(self.pin, 50)
-        self.pwm.start(0)
+        self.pwm = GPIO.PWM(self.pin, self.PWM_FREQUENCY)
         
         # Move the servo to the default angle.
         self.set_angle(self.DEFAULT_ANGLE)
@@ -48,15 +48,13 @@ class Servo:
         duty = angle / 18 + 2
 
         # Move the servo to the given angle.
-        GPIO.output(self.pin, True)
-        self.pwm.ChangeDutyCycle(duty)
+        self.pwm.start(duty)
 
         # Allow the servo to move to the given angle.
         sleep(self.MOVEMENT_DELAY)
 
         # Stop the servo from moving to reduce jitter.
-        GPIO.output(self.pin, False)
-        self.pwm.ChangeDutyCycle(0)
+        self.pwm.stop()
 
     def __del__(self):
         """Cleans up the GPIO pins."""

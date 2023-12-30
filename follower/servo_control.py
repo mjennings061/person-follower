@@ -29,6 +29,7 @@ class Servo:
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin, GPIO.OUT)
         self.pwm = GPIO.PWM(self.pin, self.PWM_FREQUENCY)
+        self.pwm.start(0)
         
         # Move the servo to the default angle.
         self.set_angle(self.DEFAULT_ANGLE)
@@ -48,13 +49,13 @@ class Servo:
         duty = angle / 18 + 2
 
         # Move the servo to the given angle.
-        self.pwm.start(duty)
+        self.pwm.ChangeDutyCycle(duty)
 
         # Allow the servo to move to the given angle.
         sleep(self.MOVEMENT_DELAY)
 
         # Stop the servo from moving to reduce jitter.
-        self.pwm.stop()
+        self.pwm.ChangeDutyCycle(0)
 
     def __del__(self):
         """Cleans up the GPIO pins."""

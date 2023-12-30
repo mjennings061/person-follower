@@ -133,11 +133,12 @@ class Stepper:
 
         # Move the stepper.
         for _ in range(abs(steps)):
-            # Determine next step in the circular buffer.
+            # Determine next index in the motor circular buffer of pin states.
             if steps >= 0:
-                self.current_step += 1 % n_states
+                current_step = (self.current_step + 1) % n_states
             else:
-                self.current_step -= 1 % n_states
+                current_step = (self.current_step - 1) % n_states
+            self.current_step = current_step
 
             # Get the next step.
             motor_sequence = self.STEP_SEQUENCE[self.current_step]

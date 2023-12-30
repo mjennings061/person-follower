@@ -1,5 +1,10 @@
+"""test_motor_control.py
+
+Unit tests for the motor_control module."""
+
 import unittest
 from follower.motor_control import Servo, Stepper
+
 
 class TestMotorControl(unittest.TestCase):
 
@@ -22,6 +27,13 @@ class TestMotorControl(unittest.TestCase):
         stepper = Stepper()
         stepper.move_by_degrees(50)
         assert(stepper.angle == 140)
+
+    def test_edge_case_stepper_movement(self):
+        stepper = Stepper([11, 13, 15, 16])
+        stepper.move_by_degrees(360)
+        assert(stepper.angle == 90)  # Full rotation should reset angle to 0
+        stepper.move_by_degrees(-360)
+        assert(stepper.angle == 90)  # Full rotation in opposite direction should also reset angle to 0
 
 
 if __name__ == '__main__':

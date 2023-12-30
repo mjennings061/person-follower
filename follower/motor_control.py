@@ -10,7 +10,7 @@ import platform
 if platform.system() == 'Windows':
     from follower.mock_gpio import MockGPIO as GPIO
 else:
-    import RPi.GPIO as GPIO
+    import RPi.GPIO as GPIO     # type: ignore
 
 class Servo:
     """Represents a servo motor."""
@@ -116,7 +116,10 @@ class Stepper:
         logging.info(f'Moving by {degrees} degrees...')
 
         # Update the stepper angle.
-        self.angle += degrees
+        angle = (self.angle + degrees) % 360
+        if angle < 0:
+            angle += 360
+        self.angle = angle
 
         # Calculate the number of steps to move.
         steps = round(degrees * self.STEPS_PER_REVOLUTION / 360)

@@ -2,6 +2,11 @@
 
 This file contains constants used by the follower module."""
 
-# Constants.
-FRAME_WIDTH = 640
-FRAME_HEIGHT = 480
+
+from dataclasses import dataclass
+
+
+@dataclass
+class Parameters:
+    FRAME_WIDTH: int = 640
+    FRAME_HEIGHT: int = 480

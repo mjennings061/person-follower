@@ -5,7 +5,7 @@ This file is the entry point for the follower module.
 
 import cv2
 import logging
-from follower.parameters import FRAME_WIDTH, FRAME_HEIGHT
+from follower.parameters import Parameters
 from follower.motor_control import Servo, Stepper
 
 
@@ -22,7 +22,7 @@ def update_motor_angle(motor, avg_x):
     GAIN = 0.05
 
     # Calculate the error.
-    error = avg_x - FRAME_WIDTH / 2
+    error = avg_x - Parameters.FRAME_WIDTH / 2
     logging.info('Error: %.1f', error)
 
     # Calculate the new angle.
@@ -159,8 +159,8 @@ def run_follower():
     cap = cv2.VideoCapture(0)
 
     # Set resolution.
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, FRAME_WIDTH)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, FRAME_HEIGHT)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, Parameters.FRAME_WIDTH)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, Parameters.FRAME_HEIGHT)
 
     while True:
         # Read the frame from the webcam.

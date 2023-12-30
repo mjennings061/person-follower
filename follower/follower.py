@@ -9,7 +9,7 @@ from parameters import FRAME_WIDTH, FRAME_HEIGHT
 from servo_control import Servo
 from time import sleep
 
-# # TODO: Delete this.
+# # TODO: Delete this when the servo code works as expected on the RPi.
 # class Servo:
 #     # Dummy class for now.
 #     def __init__(self, pin=11):
@@ -50,7 +50,7 @@ def update_servo_angle(servo, avg_x):
     servo.set_angle(angle)
 
 
-def calculate_face_positions(faces):
+def calculate_average_face_pos(faces):
         """Calculates the average x coordinate of the given faces.
         
         Args:
@@ -187,7 +187,7 @@ def run_follower():
         
         if len(faces) > 0:
             # Calculate the average x coordinate of the faces.
-            avg_x = calculate_face_positions(faces)
+            avg_x = calculate_average_face_pos(faces)
 
             # Adjust the servo position based on the average x coordinate of the faces.
             # Use a proportional controller to update the servo angle.

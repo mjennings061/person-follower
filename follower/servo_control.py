@@ -11,20 +11,21 @@ class Servo:
     """Represents a servo motor."""
 
     # Constants.
-    DEFAULT_PIN = 11
+    DEFAULT_PIN = 3
     DEFAULT_ANGLE = 90
-    MOVEMENT_DELAY = 0.5
+    MOVEMENT_DELAY = 0.25
 
     def __init__(self, pin=DEFAULT_PIN):
         """Initializes the servo.
 
         Args:
-            pin: The GPIO pin that the servo is connected to.
+            pin: The pin that the servo is connected to on the GPIO header.
         """
         logging.info(f'Setup servo on pin {pin}.')
         self.pin = pin
 
         # Setup the GPIO pin.
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pin, GPIO.OUT)
         self.pwm = GPIO.PWM(self.pin, 50)
         self.pwm.start(0)
@@ -57,12 +58,25 @@ class Servo:
         GPIO.output(self.pin, False)
         self.pwm.ChangeDutyCycle(0)
 
+    def __del__(self):
+        """Cleans up the GPIO pins."""
+        logging.info('Cleaning up GPIO pins.')
+        self.pwm.stop()
+        GPIO.cleanup()
+
 
 if __name__ == '__main__':
-    # Example GPIO pin.
-    gpio_pin = 11
-    desired_angle = 90
+    logging.basicConfig(level=logging.INFO)
 
-    # Adjust the servos based on the example faces.
+    # Example GPIO pin.
+    gpio_pin = 3
+    desired_angles = [0, 45, 90, 135, 180]
+
+    # Adjust the servos based on example angles.
     my_servo = Servo(gpio_pin)
-    my_servo.set_angle(desired_angle)
+
+    for desired_angle in desired_angles:
+        my_servo.set_angle(desired_angle)
+
+    # Cleanup the GPIO pins.
+    del my_servo

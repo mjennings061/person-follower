@@ -22,7 +22,7 @@ class Servo:
         Args:
             pin: The pin that the servo is connected to on the GPIO header.
         """
-        logging.info(f'Setup servo on pin {pin}.')
+        logging.info('Setup servo on pin %.0f.', pin)
         self.pin = pin
 
         # Setup the GPIO pin.
@@ -40,7 +40,7 @@ class Servo:
         Args:
             angle: The angle to set the servo to.
         """
-        logging.info(f'Moving to {angle} degrees.')
+        logging.info('Moving to %.0f degrees.', angle)
 
         # Update the servo angle.
         self.angle = angle
@@ -89,7 +89,7 @@ class Stepper:
         Args:
             pin: The pins that the stepper is connected to on the GPIO header.
         """
-        logging.info(f'Setup stepper on pins {pins}.')
+        logging.info('Setup stepper on pins %s.', pins.__str__()[:-1])
         self.pins = pins
 
         # Setup the GPIO pins.
@@ -107,7 +107,7 @@ class Stepper:
             angle: The angle to set the stepper to.
         """
         # Log the movement.
-        logging.info(f'Moving by {degrees} degrees...', end='')
+        logging.info('Moving by %.0f degrees...', degrees)
 
         # Update the stepper angle.
         self.angle += degrees
@@ -117,7 +117,7 @@ class Stepper:
 
         # Move the stepper.
         self._move_steps(steps)
-        logging.info(f'At {self.angle} degrees')
+        logging.info('At %.0f degrees', self.angle)
 
 
     def _move_steps(self, steps):

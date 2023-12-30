@@ -17,7 +17,7 @@ from time import sleep
 #         self.set_angle()
 
 #     def set_angle(self, angle=90):
-#         logging.info(f'Moving to {angle} degrees.')
+#         logging.info('Moving to %.0f degrees.', angle)
 #         self.angle = angle
 #         sleep(0.5)
 
@@ -30,10 +30,10 @@ from time import sleep
 #         self.angle = 90
 
 #     def move_by_degrees(self, degrees):
-#         logging.info(f'Moving by {degrees} degrees...')
+#         logging.info('Moving by %.0f degrees...', degrees)
 #         self.angle += degrees
 #         sleep(0.01 * abs(degrees) * 2048 / 360)
-#         logging.info(f'At {self.angle} degrees')
+#         logging.info('At %.0f degrees', self.angle)
 
 
 def update_motor_angle(motor, avg_x):
@@ -51,7 +51,7 @@ def update_motor_angle(motor, avg_x):
 
     # Calculate the error.
     error = avg_x - FRAME_WIDTH / 2
-    logging.info(f'Error: {error}')
+    logging.info('Error: %.1f', error)
 
     # Calculate the new angle.
     angle = round(motor.angle + error * GAIN)

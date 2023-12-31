@@ -7,10 +7,11 @@ from time import sleep
 
 # Platform-specific imports.
 import platform
-if platform.system() == 'Windows':
-    from follower.mock_gpio import MockGPIO as GPIO
-else:
+# Check if running on a raspberry pi.
+if 'arm' in platform.machine():
     import RPi.GPIO as GPIO     # type: ignore
+else:
+    from follower.mock_gpio import MockGPIO as GPIO
 
 class Servo:
     """Represents a servo motor."""
